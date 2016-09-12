@@ -4,7 +4,9 @@ import android.content.Context;
 
 import java.util.List;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.Response;
 import rx.Observable;
 import se.treehou.ng.ohcommunicator.connector.models.OHBinding;
 import se.treehou.ng.ohcommunicator.connector.models.OHInboxItem;
@@ -13,6 +15,7 @@ import se.treehou.ng.ohcommunicator.connector.models.OHLink;
 import se.treehou.ng.ohcommunicator.connector.models.OHLinkedPage;
 import se.treehou.ng.ohcommunicator.connector.models.OHServer;
 import se.treehou.ng.ohcommunicator.connector.models.OHSitemap;
+import se.treehou.ng.ohcommunicator.connector.models.OHThing;
 import se.treehou.ng.ohcommunicator.services.Connector;
 import se.treehou.ng.ohcommunicator.services.IServerHandler;
 import se.treehou.ng.ohcommunicator.services.callbacks.OHCallback;
@@ -29,6 +32,14 @@ public class TestConnectionFactory extends ConnectionFactory {
         @Override
         public void requestBindings(OHCallback<List<OHBinding>> ohCallback) {
 
+        }
+
+        @Override
+        public void createLink(OHLink ohLink) {
+        }
+
+        @Override
+        public void deleteLink(OHLink ohLink) {
         }
 
         @Override
@@ -52,23 +63,12 @@ public class TestConnectionFactory extends ConnectionFactory {
         }
 
         @Override
-        public Call<Void> createLink(OHLink ohLink) {
-            return null;
-        }
-
-        @Override
-        public Call<Void> deleteLink(OHLink ohLink) {
-            return null;
-        }
-
-        @Override
         public Observable<List<OHInboxItem>> requestInboxItemsRx() {
             return null;
         }
 
         @Override
         public void requestItem(String s, OHCallback<OHItem> ohCallback) {
-
         }
 
         @Override
@@ -83,7 +83,21 @@ public class TestConnectionFactory extends ConnectionFactory {
 
         @Override
         public void requestItems(OHCallback<List<OHItem>> ohCallback) {
+        }
 
+        @Override
+        public Observable<Response<ResponseBody>> createLinkRx(OHLink ohLink) {
+            return null;
+        }
+
+        @Override
+        public Observable<Response<ResponseBody>> deleteLinkRx(OHLink ohLink) {
+            return null;
+        }
+
+        @Override
+        public Observable<List<OHThing>> requestThingsRx() {
+            return null;
         }
 
         @Override

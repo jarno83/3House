@@ -17,12 +17,10 @@
 
     <style name="MenuItemTextSmaller" parent="TextAppearance.AppCompat.Large">
         <item name="android:textSize">20sp</item>
-        <item name="android:lines">1</item>
     </style>
 
     <style name="MenuItemTextSub" parent="TextAppearance.AppCompat.Medium">
         <item name="android:textSize">14sp</item>
-        <item name="android:lines">1</item>
     </style>
 
     <style name="DiscreteHeader" parent="TextAppearance.AppCompat.Medium">

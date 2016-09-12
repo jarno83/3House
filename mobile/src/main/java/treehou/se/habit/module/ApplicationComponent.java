@@ -16,6 +16,7 @@ import treehou.se.habit.ui.settings.subsettings.GeneralSettingsFragment;
 import treehou.se.habit.ui.sitemaps.PageFragment;
 import treehou.se.habit.ui.sitemaps.SitemapFragment;
 import treehou.se.habit.ui.sitemaps.SitemapListFragment;
+import treehou.se.habit.ui.things.ThingsListFragment;
 import treehou.se.habit.ui.widgets.factories.switches.RollerShutterWidgetHolder;
 
 @Singleton
@@ -34,4 +35,5 @@ public interface ApplicationComponent {
     void inject(RollerShutterWidgetHolder holder);
     void inject(SliderActivity.SliderFragment fragment);
     void inject(LinksListFragment fragment);
+    void inject(ThingsListFragment fragment);
 }

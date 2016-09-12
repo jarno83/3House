@@ -31,6 +31,7 @@ import treehou.se.habit.ui.inbox.InboxListFragment;
 import treehou.se.habit.ui.links.LinksListFragment;
 import treehou.se.habit.ui.servers.sitemaps.SitemapSelectFragment;
 import treehou.se.habit.ui.sitemaps.SitemapListFragment;
+import treehou.se.habit.ui.things.ThingsListFragment;
 
 public class ServerMenuFragment extends Fragment {
 
@@ -44,6 +45,7 @@ public class ServerMenuFragment extends Fragment {
     @Retention(RetentionPolicy.SOURCE)
     @IntDef ({
         ServerActions.ITEM_EDIT,
+        ServerActions.ITEM_THINGS,
         ServerActions.ITEM_INBOX,
         ServerActions.ITEM_LINKS,
         ServerActions.ITEM_BINDINGS,
@@ -55,6 +57,7 @@ public class ServerMenuFragment extends Fragment {
         int ITEM_BINDINGS = 3;
         int ITEM_SITEMAP_FILTER = 4;
         int ITEM_LINKS = 5;
+        int ITEM_THINGS = 6;
     }
 
     /**
@@ -109,6 +112,7 @@ public class ServerMenuFragment extends Fragment {
         items.add(new ImageItem(ServerActions.ITEM_EDIT, getString(R.string.edit), R.drawable.ic_edit));
         items.add(new ImageItem(ServerActions.ITEM_INBOX, getString(R.string.inbox), R.drawable.ic_inbox));
         items.add(new ImageItem(ServerActions.ITEM_BINDINGS, getString(R.string.bindings), R.drawable.ic_binding));
+        items.add(new ImageItem(ServerActions.ITEM_THINGS, getString(R.string.things), R.drawable.ic_thing));
         items.add(new ImageItem(ServerActions.ITEM_LINKS, getString(R.string.links), R.drawable.ic_link));
         items.add(new ImageItem(ServerActions.ITEM_SITEMAP_FILTER, getString(R.string.sitemaps), R.drawable.ic_sitemap));
         adapter = new ImageItemAdapter(R.layout.item_menu_image_box);
@@ -178,6 +182,17 @@ public class ServerMenuFragment extends Fragment {
                 .commit();
     }
 
+    /**
+     * Open things page for server.
+     * @param serverId the server to open page for.
+     */
+    private void openThingsPage(long serverId){
+        getActivity().getSupportFragmentManager().beginTransaction()
+                .replace(container.getId(), ThingsListFragment.newInstance(serverId))
+                .addToBackStack(null)
+                .commit();
+    }
+
     private ImageItemAdapter.OnItemClickListener optionsSelectListener = id -> {
 
         Fragment fragment = null;
@@ -190,6 +205,9 @@ public class ServerMenuFragment extends Fragment {
                 break;
             case ServerActions.ITEM_BINDINGS:
                 openBindingsPage(serverId);
+                break;
+            case ServerActions.ITEM_THINGS:
+                openThingsPage(serverId);
                 break;
             case ServerActions.ITEM_LINKS:
                 openLinksPage(serverId);

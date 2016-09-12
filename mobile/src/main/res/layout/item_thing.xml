@@ -36,15 +36,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:id="@+id/lbl_item"
+                    android:id="@+id/lbl_thing"
                     style="@style/MenuItemTextSmaller"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:id="@+id/lbl_channel"
-                    style="@style/MenuItemTextSub"/>
             </LinearLayout>
         </LinearLayout>
     </android.support.v7.widget.CardView>

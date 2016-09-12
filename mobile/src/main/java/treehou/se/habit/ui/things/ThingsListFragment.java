@@ -1,11 +1,11 @@
-package treehou.se.habit.ui.links;
+package treehou.se.habit.ui.things;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,17 +21,20 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import io.realm.Realm;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 import se.treehou.ng.ohcommunicator.connector.models.OHLink;
+import se.treehou.ng.ohcommunicator.connector.models.OHThing;
 import treehou.se.habit.HabitApplication;
 import treehou.se.habit.R;
 import treehou.se.habit.core.db.model.ServerDB;
 import treehou.se.habit.ui.adapter.LinkAdapter;
+import treehou.se.habit.ui.adapter.ThingAdapter;
 import treehou.se.habit.util.ConnectionFactory;
 
-public class LinksListFragment extends RxFragment {
+public class ThingsListFragment extends RxFragment {
 
-    private static final String TAG = LinksListFragment.class.getSimpleName();
+    private static final String TAG = ThingsListFragment.class.getSimpleName();
 
     private static final String ARG_SERVER = "ARG_SERVER";
 
@@ -41,7 +44,7 @@ public class LinksListFragment extends RxFragment {
     @BindView(R.id.list) RecyclerView listView;
     @BindView(R.id.empty) TextView emptyView;
 
-    private LinkAdapter adapter;
+    private ThingAdapter adapter;
     private Realm realm;
     private ServerDB server;
     private Unbinder unbinder;
@@ -51,8 +54,8 @@ public class LinksListFragment extends RxFragment {
      *
      * @return Fragment
      */
-    public static LinksListFragment newInstance(long serverId) {
-        LinksListFragment fragment = new LinksListFragment();
+    public static ThingsListFragment newInstance(long serverId) {
+        ThingsListFragment fragment = new ThingsListFragment();
         Bundle args = new Bundle();
         args.putLong(ARG_SERVER, serverId);
         fragment.setArguments(args);
@@ -63,7 +66,7 @@ public class LinksListFragment extends RxFragment {
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public LinksListFragment() {}
+    public ThingsListFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -79,20 +82,20 @@ public class LinksListFragment extends RxFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_links_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_things_list, container, false);
         unbinder = ButterKnife.bind(this, view);
         setupActionBar();
         listView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        adapter = new LinkAdapter();
-        adapter.setItemListener(new LinkAdapter.ItemListener() {
+        adapter = new ThingAdapter();
+        adapter.setItemListener(new ThingAdapter.ItemListener() {
             @Override
-            public void onItemClickListener(OHLink item) {
-                openRemoveLinkDialog(item);
+            public void onItemClickListener(OHThing item) {
+                openThingDialog(item);
             }
 
             @Override
-            public boolean onItemLongClickListener(OHLink item) {
+            public boolean onItemLongClickListener(OHThing item) {
                 return false;
             }
         });
@@ -102,34 +105,11 @@ public class LinksListFragment extends RxFragment {
     }
 
     /**
-     * Ask user if link should be removed.
-     * @param link the link to remove.
+     * Open thing page.
+     * @param thing the thing to open.
      */
-    private void openRemoveLinkDialog(OHLink link){
-        new AlertDialog.Builder(getContext())
-                .setMessage(R.string.remove_link)
-                .setPositiveButton(android.R.string.ok, (dialogInterface, i) -> removeLink(link))
-                .setNegativeButton(android.R.string.cancel, null)
-                .create()
-                .show();
-    }
+    private void openThingDialog(OHThing thing){
 
-    /**
-     * Remove link.
-     * @param link the link to remove
-     */
-    private void removeLink(OHLink link){
-        adapter.removeItem(link);
-
-        connectionFactory.createServerHandler(server.toGeneric(), getContext())
-                .deleteLinkRx(link)
-                .compose(bindToLifecycle())
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(responseBodyResponse -> {
-                    adapter.addItem(link);
-                    Toast.makeText(getContext(), R.string.failed_delete_link, Toast.LENGTH_SHORT).show();
-                });
     }
 
     /**
@@ -137,7 +117,7 @@ public class LinksListFragment extends RxFragment {
      */
     private void setupActionBar(){
         ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
-        if(actionBar != null) actionBar.setTitle(R.string.links);
+        if(actionBar != null) actionBar.setTitle(R.string.things);
     }
 
     /**
@@ -152,7 +132,7 @@ public class LinksListFragment extends RxFragment {
     public void onResume() {
         super.onResume();
 
-        loadLinks();
+        loadThings();
     }
 
     @Override
@@ -170,17 +150,19 @@ public class LinksListFragment extends RxFragment {
     /**
      * Load servers from database and request their sitemaps.
      */
-    private void loadLinks(){
+    private void loadThings(){
         connectionFactory.createServerHandler(server.toGeneric(), getContext())
-                .requestLinksRx()
-                .filter(ohLinks -> ohLinks.size() > 0)
+                .requestThingsRx()
+                .filter(ohThings -> ohThings.size() > 0)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .compose(bindToLifecycle())
-                .subscribe(ohLinks -> {
+                .subscribe(ohThings -> {
                     clearList();
                     emptyView.setVisibility(View.GONE);
-                    adapter.addAll(ohLinks);
+                    adapter.addAll(ohThings);
+                }, throwable -> {
+                    Log.e(TAG, "Error loading things", throwable);
                 });
     }
 }
